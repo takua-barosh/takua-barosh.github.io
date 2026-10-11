@@ -858,7 +858,7 @@ new ResizeObserver(reportHeight).observe(document.querySelector(&#x27;.community
       document.documentElement.classList.add('js');
 
       // Optional: your live URL, for sharing when opening this HTML locally.
-      const PUBLIC_SITE_URL = 'https://takua-barosh.github.io/takuabarosh/';
+      const PUBLIC_SITE_URL = new URL('./', window.location.href).href;
       const menuButton = document.querySelector('.menu-toggle');
       const menu = document.getElementById('site-nav');
       const menuIcon = menuButton.querySelector('use');
