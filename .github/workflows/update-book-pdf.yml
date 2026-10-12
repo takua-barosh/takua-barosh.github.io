@@ -1,0 +1,27 @@
+name: Update site book PDF
+on:
+  push:
+    paths:
+      - .github/workflows/update-book-pdf.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  replace-book:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download latest book and verify integrity
+        env:
+          FILE_URL: "https://sdmntprnortheu.oaiusercontent.com/files/00000000-fa4c-81f4-94d4-93638ff7e099/raw?se=2026-10-12T07%3A56%3A40Z&sp=r&sv=2026-02-06&sr=b&scid=b44840d8-84b0-50e7-aaa6-42ac51f0e71e&skoid=e5e3659d-4463-4dbf-b2ce-ee32bc0a0a8d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-12T02%3A42%3A07Z&ske=2026-10-13T02%3A42%3A07Z&sks=b&skv=2026-02-06&sig=s%2Bg6A4d1tgbGyfYMs9C6WwO2jRZmEw7Rl9Tx3/9IGDU%3D"
+        run: |
+          curl --fail --location --retry 3 --output takua-barosh.pdf "$FILE_URL"
+          echo '04bed1177fa68d3eeb5755d4b18cda86669f837c1a9f3f168bb105a5594dc755  takua-barosh.pdf' | sha256sum -c -
+      - name: Publish PDF and remove temporary workflow
+        run: |
+          rm .github/workflows/update-book-pdf.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add takua-barosh.pdf .github/workflows/update-book-pdf.yml
+          git commit -m 'Replace book PDF with latest corrected 44-page version'
+          git push
